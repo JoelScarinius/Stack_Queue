@@ -2,33 +2,34 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX 10
-
+#define MAX 10 // This define is the maximum number of elements the stack can hold.
+// The Integer top is the top position of the stack and the integer option will be 1 or 0 deepending on the users decision.
 int top = -1, option = 1;
-int stack[MAX];
-
-bool validInput(char *expression, bool validInput);
+int stack[MAX]; // This is the stack that we will push characters to and pop characters from.
+// This function controls that the user inputs an expression only containing the characters '(', ')', '[', ']' '{' and '}'.
+bool validInput(char *expression, bool validInput); 
+// This function then controls if the inputted expression is a valid expression.
 int validExpression(char *expression, int *flag);
+// This function inserts a character to the top of the stack.
 void push(char);
+// This function deletes a character from the top of the stack.
 char pop();
 
 void main() {
     do {
-        int flag = 1;
-        char expression[MAX*2];
-        bool validInputStr = false;
-        top = -1;
+        int flag = 1; // This integer flag is used to print the correct message to the screen.
+        char expression[MAX*2]; // This is a string representation of the inputted expression.
+        // This is variable is set to true if the user inputs an expression only containing the characters '(', ')', '[', ']' '{' and '}'.
+        bool validInputStr = false; 
+        top = -1; // Because I decieded to loop my program I had to reset top in some situations.
 
-        do {
+        do { // Loops until user inputs an expression only containing the characters '(', ')', '[', ']' '{' and '}'.
             validInputStr = validInput(expression, validInputStr);
             if(!validInputStr) puts("Your input doesn't only contain '(', ')', '[', ']' '{' and '}', please try again!");
         } while (!validInputStr); 
-        validExpression(expression, &flag); 
-        if (flag == 0) {
-            if (top == (MAX-1)) printf("Stack Overflow!\n");
-            else if (top == -1) printf("Stack Underflow!\n");
-            else printf("Ouch! The expression is not balanced!\n");
-        }
+        validExpression(expression, &flag); // Will change the value of flag if invalid expression, stack overflow or stack underflow.
+        if (flag == 0) (top == (MAX-1)) ? printf("Stack Overflow!\n") : printf("Ouch! The expression is not balanced!\n");
+        else if (flag == -1 && top == -1) printf("Stack Underflow!\n");
         else printf("Great the expression is balanced!\n");
         printf("\nDo you want to try another expression?\nPress \"0\" for \"yes\" and \"1\" for \"no\": ");
         fflush(stdin);
@@ -36,55 +37,58 @@ void main() {
     } while (option == 0);
 }
 
-bool validInput(char *expression, bool validInputStr) {
+bool validInput(char *expression, bool validInputStr) { // Controls that the expression only contains the valid characters.
     fflush(stdin);
     printf("Enter an expression only containing '(', ')', '[', ']' '{' and '}': ");
     fgets(expression, MAX*2, stdin);
-    expression[(strlen(expression)-1)] = '\0';
+    expression[(strlen(expression)-1)] = '\0'; // Sets the newline character added by fgets to '\0'.
     
-    for (size_t i = 0; expression[i] != '\0' ; i++) {
+    for (size_t i = 0; expression[i] != '\0' ; i++) { // Loops until every character in expression have been controlled.
         if (expression[i] == '(' || expression[i] == ')' || expression[i] == '[' || 
             expression[i] == ']' || expression[i] == '{' || expression[i] == '}') {
             validInputStr = true;
         }
-        else return validInputStr = false;
+        else return validInputStr = false; // If any character isn't one of these characters '(', ')', '[', ']' '{' and '}' return false.
     }
-    return validInputStr;
+    return validInputStr; // Expression is only containing the characters '(', ')', '[', ']' '{' and '}' so the function returns true.
 }
 
 int validExpression(char *expression, int *flag) {
     for(size_t i = 0; expression[i] != '\0'; i++) {
-        if (top == (MAX-1)) return *flag = 0;    
-        else if (expression[i] == '(') {
-            if(expression[i+1] == '{' || expression[i+1] == '[' || expression[i+1] == '\0') return *flag = 0;
-            else push(expression[i]);
+        if (top == (MAX-1)) return *flag = 0; // If top == Max-1 we will have stock overflow condition.
+        // Push to stack if next element in expression isn't '{','[' or '\0'. If next element is '{','[' or '\0' expression is invalid.
+        if (expression[i] == '(') { 
+            if(expression[i+1] == '{' || expression[i+1] == '[' || expression[i+1] == '\0') return *flag = 0; // Flag = 0 prints Not Balanced. 
+            else push(expression[i]); // Push character at position i in expression to stack.
         }
-        else if (expression[i] == '[') {
-            if (expression[i+1] == '{' || expression[i+1] == '\0') return *flag = 0;
-            else push(expression[i]);
+        // Push to stack if next element in expression isn't '{' or '\0'. If next element is '{' or '\0' expression is invalid.
+        if (expression[i] == '[') {
+            if (expression[i+1] == '{' || expression[i+1] == '\0') return *flag = 0; // Flag = 0 prints Not Balanced.
+            else push(expression[i]); // Push character at position i in expression to stack.
         }
-        else if (expression[i] == '{') {
-            if(expression[i+1] == '\0') return *flag = 0;
-            else push(expression[i]);
+        // Push to stack if next element in expression isn't '\0'. If next element is '\0' expression is invalid.
+        if (expression[i] == '{') {
+            if (expression[i+1] == '\0') return *flag = 0; // Flag = 0 prints Not Balanced.
+            else push(expression[i]); // Push character at position i in expression to stack.
         }
-        if (expression[i] == ')' || expression[i] == '}' || expression[i] == ']')
-            if (top == -1) return *flag = 0;
-        else {
-            if (top == -1) return *flag = 0;
-            char temp = pop();
-            if (expression[i] == ')' && (temp == '{' || temp == '[')) return *flag = 0;
-            if (expression[i] == '}' && (temp == '(' || temp == '[')) return *flag = 0;
-            if (expression[i] == ']' && (temp == '(' || temp == '{')) return *flag = 0;
-            if (expression[i+1] == '\0' && top != -1) return *flag = 0;
+        if (expression[i] == ')' || expression[i] == '}' || expression[i] == ']') {
+            if (top == -1) return *flag = -1; // If top == -1 we will return flag -1 which means stack underflow.
+            else { // These if statements checks if expression is valid else flag = 0 is returned and Not Balanced is printed.
+                char temp = pop();
+                if (expression[i] == ')' && (temp == '{' || temp == '[')) return *flag = 0;
+                if (expression[i] == '}' && (temp == '(' || temp == '[')) return *flag = 0;
+                if (expression[i] == ']' && (temp == '(' || temp == '{')) return *flag = 0;
+                if (expression[i+1] == '\0' && top != -1) return *flag = 0;
+            }
         }
     } 
 }
 
-void push(char character) {
-    top = top+1;
-    stack[top] = character;
+void push(char character) { // Inserts a character to the top of the stack.
+    top = top+1; // Increments top to be the new top position.
+    stack[top] = character; // Inserts the character to the new top position of the stack.
 }
 
-char pop() {
-    return stack[top--];
+char pop() { // Deletes a character from the top of the stack.
+    return stack[top--]; // Decrement the value of top and returns the character at the new top position.
 }
