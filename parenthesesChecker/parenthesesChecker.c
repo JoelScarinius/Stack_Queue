@@ -6,6 +6,8 @@
 // The Integer top is the top position of the stack and the integer option will be 1 or 0 deepending on the users decision.
 int top = -1, option = 1;
 int stack[MAX]; // This is the stack that we will push characters to and pop characters from.
+// This function prints a welcome message to the screen.
+void printWelcomeMessage();
 // This function controls that the user inputs an expression only containing the characters '(', ')', '[', ']' '{' and '}'.
 bool validInput(char *expression, bool validInput); 
 // This function then controls if the inputted expression is a valid expression.
@@ -16,8 +18,11 @@ void push(char);
 char pop();
 // This function prints (based on the value of flag) one of these messages "Not Balanced", "Stack Overflow", "Stack Underflow" or "Balanced".
 void printResult(int *flag);
+// This function asks the user if they want to try a new expression and sets option to "0" for "yes" or "1" for "no".
+void endMessage(int *option);
 
 void main() {
+    printWelcomeMessage();
     do {
         int flag = 1; // This integer flag is used to print the correct message to the screen.
         char expression[MAX*2]; // This is a string representation of the inputted expression.
@@ -25,21 +30,33 @@ void main() {
         bool validInputStr = false; 
         top = -1; // Because I decieded to loop my program I had to reset top in some situations.
 
-        do { // Loops until user inputs an expression only containing the characters '(', ')', '[', ']' '{' and '}'.
+        do { // Loops until user inputs an expression containing only the characters '(', ')', '[', ']' '{' and '}'.
             validInputStr = validInput(expression, validInputStr);
-            if(!validInputStr) puts("Your input doesn't only contain '(', ')', '[', ']' '{' and '}', please try again!");
+            if(!validInputStr) puts("Your input doesn't contain only the characters '(', ')', '[', ']' '{' and '}', please try again!");
         } while (!validInputStr); 
         validExpression(expression, &flag); // Will change the value of flag if invalid expression, stack overflow or stack underflow.
         printResult(&flag); // Prints proper message to the screen based on flag's value.
-        printf("\nDo you want to try another expression?\nPress \"0\" for \"yes\" and \"1\" for \"no\": ");
-        fflush(stdin);
-        scanf("%d", &option);
+        endMessage(&option); // Prints an end message to the screen asking the user to input "0" for "yes" and "1" for "no".
     } while (option == 0);
 }
 
-bool validInput(char *expression, bool validInputStr) { // Controls that the expression only contains the valid characters.
+void printWelcomeMessage() { // Prints a welcome message to the screen.
+    puts("************************************************************************************\n"
+        "Welcome!\n"
+        "This is a program that uses a stack to check if an expression is a valid expression.\n"
+        "The Constraints are:\n"
+        "• The expression can contain only the characters '(', ')', '[', ']' '{' and '}'.\n"
+        "• Open brackets must be closed by the same type of brackets.\n"
+        "• Open brackets must be closed in the correct order.\n"
+        "• Curved ( ) brackets can contain only ( ) brackets.\n"
+        "• Square brackets [ ] can contain only [ ] and ( ) brackets.\n"
+        "• Curly { } brackets can contain { }, [ ] and ( ) brackets.\n"
+        "************************************************************************************\n");
+}
+
+bool validInput(char *expression, bool validInputStr) { // Controls that the expression only contain the valid characters.
     fflush(stdin);
-    printf("Enter an expression only containing '(', ')', '[', ']' '{' and '}': ");
+    printf("Enter an expression containing only the characters '(', ')', '[', ']' '{' and '}': ");
     fgets(expression, MAX*2, stdin);
     expression[(strlen(expression)-1)] = '\0'; // Sets the newline character added by fgets to '\0'.
     
@@ -97,4 +114,11 @@ void printResult(int *flag) { // Prints proper message to the screen based on fl
     if (*flag == 0) (top == (MAX-1)) ? printf("Stack Overflow!\n") : printf("Ouch! The expression is Not Balanced!\n");
     else if (*flag == -1 && top == -1) printf("Stack Underflow!\n");
     else printf("Great the expression is Balanced!\n");
+}
+
+void endMessage(int *option) { // Prints an end message to the screen asking the user to input "0" for "yes" and "1" for "no".
+    printf("\nDo you want to try another expression?\nPress \"0\" for \"yes\" and \"1\" for \"no\": ");
+    fflush(stdin);
+    scanf("%d", &*option);
+    if (*option == 1) puts("\nHave a good one!");
 }

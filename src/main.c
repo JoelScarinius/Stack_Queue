@@ -4,8 +4,8 @@
 // Option is a integer variable thatis used to represent what menu choice the user have chosen. 
 static unsigned int option = 0;
 
-static void printWelcomeMessage(); // Prints a short welcome message.
-static void displayMainMenu(); // Displays the main menu.
+static void printWelcomeMessage(); // This function prints a short welcome message.
+static void displayMainMenu(); // This function displays the main menu.
 
 void main() {
     printWelcomeMessage();
