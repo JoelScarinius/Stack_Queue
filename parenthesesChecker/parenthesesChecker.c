@@ -14,6 +14,8 @@ int validExpression(char *expression, int *flag);
 void push(char);
 // This function deletes a character from the top of the stack.
 char pop();
+// This function prints (based on the value of flag) one of these messages "Not Balanced", "Stack Overflow", "Stack Underflow" or "Balanced".
+void printResult(int *flag);
 
 void main() {
     do {
@@ -28,9 +30,7 @@ void main() {
             if(!validInputStr) puts("Your input doesn't only contain '(', ')', '[', ']' '{' and '}', please try again!");
         } while (!validInputStr); 
         validExpression(expression, &flag); // Will change the value of flag if invalid expression, stack overflow or stack underflow.
-        if (flag == 0) (top == (MAX-1)) ? printf("Stack Overflow!\n") : printf("Ouch! The expression is not balanced!\n");
-        else if (flag == -1 && top == -1) printf("Stack Underflow!\n");
-        else printf("Great the expression is balanced!\n");
+        printResult(&flag); // Prints proper message to the screen based on flag's value.
         printf("\nDo you want to try another expression?\nPress \"0\" for \"yes\" and \"1\" for \"no\": ");
         fflush(stdin);
         scanf("%d", &option);
@@ -91,4 +91,10 @@ void push(char character) { // Inserts a character to the top of the stack.
 
 char pop() { // Deletes a character from the top of the stack.
     return stack[top--]; // Decrement the value of top and returns the character at the new top position.
+}
+
+void printResult(int *flag) { // Prints proper message to the screen based on flag's value.
+    if (*flag == 0) (top == (MAX-1)) ? printf("Stack Overflow!\n") : printf("Ouch! The expression is Not Balanced!\n");
+    else if (*flag == -1 && top == -1) printf("Stack Underflow!\n");
+    else printf("Great the expression is Balanced!\n");
 }
