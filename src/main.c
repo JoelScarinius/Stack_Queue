@@ -18,6 +18,8 @@ void main() {
     Task *t = create_task(p);
     int wt = wait_time(t, ct);
     enqueue(q, t);
+    // dequeue(q);
+    display_queue(q);
     // do {
     //     displayMainMenu();
     //     printf("\nYour choice?: ");

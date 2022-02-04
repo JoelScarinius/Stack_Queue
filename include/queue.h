@@ -4,11 +4,14 @@
 #ifndef QUEUE_H_ /* Include guard */
 #define QUEUE_H_
 
-typedef struct node Node;
-
+typedef struct node {
+	struct node *next;
+	int time_stamp;
+	int pages;
+} Node;
 //declare queue
 typedef struct queue {
-	Node *front, *rear, *next;
+	Node *front, *rear;
 } Queue;
 
 //create a queue
