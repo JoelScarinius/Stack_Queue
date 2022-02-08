@@ -13,7 +13,7 @@
 //parameters:
 //  *p, the pointer points to the printer
 void tick(Printer *p) {
-
+    p->time_remaining--;
 }
 
 //check whehter the printer is printing
@@ -21,7 +21,7 @@ void tick(Printer *p) {
 //  *p, the pointer points to the printer
 //return 1 (true) or 0 (false)
 int is_busy(Printer *p) {
-
+    retrun (p->current_task->pages == 0) ? 1 : 0;
 }
 
 //start the next printing task
@@ -29,7 +29,7 @@ int is_busy(Printer *p) {
 //  *p, the pointer points to the printer
 //  *t, the pointer points to the printing task
 void start_next(Printer *p, Task *t) {
-
+    
 }
 
 //display the printer's current status

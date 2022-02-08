@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include "task.h"
 #include "queue.h"
 
 int n = 2, m = 5, p = 40, ct = 10;
-
 
 // Option is a integer variable thatis used to represent what menu choice the user have chosen. 
 // static unsigned int option = 0;
@@ -13,6 +14,8 @@ static void printWelcomeMessage(); // This function prints a short welcome messa
 // static void displayMainMenu(); // This function displays the main menu.
 
 void main() {
+    srand(time(NULL));
+    p = rand();
     printWelcomeMessage();
     Queue *q = create_queue();
     Task *t = create_task(p);
@@ -20,6 +23,7 @@ void main() {
     enqueue(q, t);
     // dequeue(q);
     display_queue(q);
+    int flag = is_empty(q);
     // do {
     //     displayMainMenu();
     //     printf("\nYour choice?: ");

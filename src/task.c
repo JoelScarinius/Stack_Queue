@@ -8,14 +8,14 @@
 //return:
 //  the pointer that points to to the task
 Task* create_task(int p) {
-    // Task *t = (Task*)malloc(sizeof(Task)); // Allocates memory for a task on the heap.
-    Task *t;
+    Task *t = (Task*)malloc(sizeof(Task)); // Allocates memory for a task on the heap.
+    // Task *t;
     if (t == NULL) { // If memory wasn't possible to allocate for any reason.
         puts("Failed to allocate memory on the heap!");
         exit(-1);
     }
-    t->time_stamp = 1;
-    t->pages = p;
+    t->time_stamp = p; // Hur ska vi få in värden här?
+    t->pages = p; // Antalet sidor ska inte vara samma för alla tasks??
     return t;
 }
 
