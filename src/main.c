@@ -6,41 +6,38 @@
 #include "queue.h"
 #include "printer.h"
 
+#define SECPERTASK 2 // On average there will be one print task in 2 seconds.
+
 static void printWelcomeMessage(); // This function prints a short welcome message.
 
-void main() { // LOOP s decrement by 1 second for every loop
-    // One print task in n seconds. Length of print tasks ranges from 1 to m pages.
-    int n = 2, m = 5, pages = 0, ct = 1;
-    printWelcomeMessage();
-    srand(time(NULL));
-    Queue *q = create_queue();
-    Task *t = create_task(m);
-    Printer *p = (Printer*)malloc(sizeof(Printer));
-    p->page_rate = 40;
-    p->time_remaining = 0;
-    while (ct != 10) {
-        printer_status(p);
-        if ((1 + rand() % 10) > 5 && pages < p->page_rate) {
-            t = create_task(m);
-            t->time_stamp = ct;
-            pages += t->pages;
-            enqueue(q, t);
+void main() { 
+    printWelcomeMessage(); // Prints welcome message to the screen.
+    srand(time(NULL)); // Seeds the random function to not create the same sequences.
+    int ct = 1; // Variable used to display current time in second.
+    Queue *q = create_queue(); // Creates the queue.
+    Task *t = NULL;
+    Printer *p = (Printer*)malloc(sizeof(Printer)); // Allocates memory for the printer.
+    p->time_remaining = 0; // Sets remaining time to 0 to kick of the printer simulation.
+    while (ct != 10) { // Loops until current time has reached 10 seconds
+        printer_status(p); // Displays the printers status to the screen.
+        if ((1 + rand() % 10) > 5 || ct == 1) { // 50/50 chans to create a task, but always creates a task at first iteration.
+            t = create_task(ct); // Creates a new task.
+            enqueue(q, t); // Puts the new task in the end of the queue.
         }
         if (p->time_remaining > 0) printf("%d seconds to complete the current task\n", p->time_remaining);
-        display_queue(q);
-        if (is_empty(q) == 0 && is_busy(p) == 0) {
-            t = dequeue(q);
-            start_next(p, t);
-            p->time_remaining = t->pages + n;
+        display_queue(q); // Displays the entire queue.
+        if (is_empty(q) == 0 && is_busy(p) == 0) { // If the queue isn't empty and the printer isn't busy dequeue and start task.
+            t = dequeue(q); // Deletes the first task from the queue.
+            start_next(p, t); // Starts printing the task that was deleted from the queue.
+            p->time_remaining = t->pages + SECPERTASK; // Initialize time remaining with proper time in seconds to preform task.
         }
-        if (p->time_remaining > 0) tick(p);
-        ct++;
+        if (p->time_remaining > 0) tick(p); // Decrement the remaining time with 1 second.
+        ct++; // Increment current time by 1 second.
     }
     puts("\nSIMULATION ENDS");
     fflush(stdin);
     getchar();
 }
-
 static void printWelcomeMessage() { // Prints welcome message to the screen.
     puts("****************************************************************************************************\n"
         "Welcome!\n"
