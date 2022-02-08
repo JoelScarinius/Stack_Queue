@@ -4,14 +4,13 @@
 #ifndef QUEUE_H_ /* Include guard */
 #define QUEUE_H_
 
-typedef struct node {
-	struct node *next;
-	int time_stamp;
-	int pages;
+typedef struct node { // This struct is used to create the nodes in the linkedlist.
+	struct node *next; // This is the next node in the linkedlist.
+	Task *t; // This is a pointer to the task structure.
 } Node;
 //declare queue
-typedef struct queue {
-	Node *front, *rear;
+typedef struct queue { // This struct is representing the queue of nodes containing the tasks.
+	Node *front, *rear; // Front is the starting node of the queue and rear is the end of the queue.
 } Queue;
 
 //create a queue

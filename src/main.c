@@ -4,56 +4,47 @@
 #include <stdlib.h>
 #include "task.h"
 #include "queue.h"
-
-int n = 2, m = 5, p = 40, ct = 10;
-
-// Option is a integer variable thatis used to represent what menu choice the user have chosen. 
-// static unsigned int option = 0;
+#include "printer.h"
 
 static void printWelcomeMessage(); // This function prints a short welcome message.
-// static void displayMainMenu(); // This function displays the main menu.
 
-void main() {
-    srand(time(NULL));
-    p = rand();
+void main() { // LOOP s decrement by 1 second for every loop
+    // One print task in n seconds. Length of print tasks ranges from 1 to m pages.
+    int n = 2, m = 5, pages = 0, ct = 1;
     printWelcomeMessage();
+    srand(time(NULL));
     Queue *q = create_queue();
-    Task *t = create_task(p);
-    int wt = wait_time(t, ct);
-    enqueue(q, t);
-    // dequeue(q);
-    display_queue(q);
-    int flag = is_empty(q);
-    // do {
-    //     displayMainMenu();
-    //     printf("\nYour choice?: ");
-    //     fflush(stdin);
-    //     scanf("%d", &option);
-    //     switch(option) { // Control structure for all the different options the user have.
-    //     case 1: break;
-    //     case 2: break;
-    //     case 3: break;
-    //     case 4: break;
-    //     case 0: break;
-    //     default: break;
-    //     }
-    // } while (option != 0);
+    Task *t = create_task(m);
+    Printer *p = (Printer*)malloc(sizeof(Printer));
+    p->page_rate = 40;
+    p->time_remaining = 0;
+    while (ct != 10) {
+        printer_status(p);
+        if ((1 + rand() % 10) > 5 && pages < p->page_rate) {
+            t = create_task(m);
+            t->time_stamp = ct;
+            pages += t->pages;
+            enqueue(q, t);
+        }
+        if (p->time_remaining > 0) printf("%d seconds to complete the current task\n", p->time_remaining);
+        display_queue(q);
+        if (is_empty(q) == 0 && is_busy(p) == 0) {
+            t = dequeue(q);
+            start_next(p, t);
+            p->time_remaining = t->pages + n;
+        }
+        if (p->time_remaining > 0) tick(p);
+        ct++;
+    }
+    puts("\nSIMULATION ENDS");
+    fflush(stdin);
+    getchar();
 }
 
 static void printWelcomeMessage() { // Prints welcome message to the screen.
-    puts("**************************************************************************************************\n"
+    puts("****************************************************************************************************\n"
         "Welcome!\n"
         "This is a program that uses a queue implemented as a linkedlist to create a simulation of a printer.\n"
         "Please enjoy!\n"
-        "***************************************************************************************************");
+        "****************************************************************************************************");
 }
-
-// static void displayMainMenu() { // Displays the main menu.
-//     puts("\n\n***** MAIN MENU *****"
-//         "\n1: Display record"
-//         "\n2: Display directory"
-//         "\n3: Add a new record at the beginning of the directory"
-//         "\n4: Delete a record"
-//         "\n0: Exit");
-// }
-

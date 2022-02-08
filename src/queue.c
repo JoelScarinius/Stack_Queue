@@ -2,71 +2,52 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-//create a queue
-//return the pointer that points to the queue 
-Queue* create_queue() {
+Queue* create_queue() { // Creates the queue where tasks will be stored.
     Queue *q = (Queue*)malloc(sizeof(Queue)); // Allocates memmory on the heap for the queue;
-    q->front = q->rear = NULL;
+    if (q == NULL) { // If memory wasn't possible to allocate for any reason.
+        puts("Failed to allocate memory on the heap!");
+        exit(-1);
+    }
+    q->front = q->rear = NULL; // Initializes the queue to NULL, because at first the queue is empty.
     return q;
 }
-
-//add a task into the queue 
-//parameters:
-//  *q, the pointer that points to queue 
-//  *t, the pointer that points to the printing task
-void enqueue(Queue *q, Task *t) {
+void enqueue(Queue *q, Task *t) { // Inserts a task at the end of the queue.
     Node *ptr = (Node*)malloc(sizeof(Node));
-
-    if(q->front == NULL) {
+    if (ptr == NULL) { // If memory wasn't possible to allocate for any reason.
+        puts("Failed to allocate memory on the heap!");
+        exit(-1);
+    }
+    ptr->t = t;
+    if(q->front == NULL) { // If queue is empty insert the task as the first task in the queue.
         q->front = q->rear = ptr;
-        q->front->time_stamp = q->rear->time_stamp = t->time_stamp;
-        q->front->pages = q->rear->pages = t->pages;
         q->front->next = q->rear->next = NULL;
     }
-    else {
+    else { // Else insert the task at the end of the queue.
         q->rear->next = ptr;
         q->rear = ptr;
-        q->rear->time_stamp = t->time_stamp;
-        q->rear->pages = t->pages;
         q->rear->next = NULL;
     }
 }
-
-//delete a task from the queue 
-//parameters:
-//  *q, the pointer that points to the queue 
-//return the dequeued task
-Task* dequeue(Queue *q) {
-    Task *t; // WTF, VAD SKA JAG GÖRA MED TASK t HÄR??
-    Node *ptr;
-    ptr = q->front;
-    if(q->front == NULL) printf("\n UNDERFLOW");
-    else {
-        q->front = q->front->next;
-        free(ptr);
+Task* dequeue(Queue *q) { // Delete a task from the queue.
+    Node *ptr = q->front; // Dont need to check for underflow condition because this function will not be called if queue is empty.
+    if (q->front == q->rear) { // If only 1 task is in the queue both front and rear is changed to be NULL beacuse now queue is empty. 
+        q->front = q->rear = NULL;
     }
-    return t; // VARFÖR RETUNERA EN TASK t??, VAD SKA JAG GÖRA MED TASK t HÄR??
+    else q->front = q->front->next; // Else front is changed to be the second task in the queue and the old front is returned.
+    return ptr->t;
 }
-
-//display all the tasks in the queue 
-//parameters:
-//  *q, the pointer that points to the queue 
-void display_queue(Queue *q) {
-    if(q->front == NULL && q->rear == NULL) printf("\n QUEUE IS EMPTY");
+void display_queue(Queue *q) { // Displays all the tasks in the queue.
+    if(is_empty(q) == 1) puts("QUEUE IS EMPTY");
     else {
         Node *ptr = q->front;
-        printf("\n");
+        puts("TASKS IN QUEUE:");
         while(ptr->next != NULL) {
-            printf("[arravies at %d second, %d pages]", ptr->time_stamp, ptr->pages);
+            printf("TASK [arravies at %d second, %d pages]\n", ptr->t->time_stamp, ptr->t->pages);
             ptr = ptr->next;
         }
-        printf("[arravies at %d second, %d pages]", ptr->time_stamp, ptr->pages);
+        printf("TASK [arravies at %d second, %d pages]\n", ptr->t->time_stamp, ptr->t->pages);
     }
 }
-
-//check whether the queue is empty
-//parameters:
-//  *q, the pointer that points to the queue 
-int is_empty(Queue *q) {
+int is_empty(Queue *q) { // Checks whether the queue is empty
     return (q->front == NULL && q->rear == NULL) ? 1 : 0;
 }

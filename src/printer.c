@@ -1,39 +1,15 @@
 #include "printer.h"
+#include <stdio.h>
 
-
-
-
-
-
-
-
-
-//do one second of printing, 
-//i.e. the remaning time to complete the current task is subtracted one. 
-//parameters:
-//  *p, the pointer points to the printer
-void tick(Printer *p) {
+void tick(Printer *p) { // Does one second of printing.
     p->time_remaining--;
 }
-
-//check whehter the printer is printing
-//parameters:
-//  *p, the pointer points to the printer
-//return 1 (true) or 0 (false)
-int is_busy(Printer *p) {
-    retrun (p->current_task->pages == 0) ? 1 : 0;
+int is_busy(Printer *p) { // Checks whehter the printer is printing.
+    return (p->time_remaining != 0) ? 1 : 0;
 }
-
-//start the next printing task
-//parameters:
-//  *p, the pointer points to the printer
-//  *t, the pointer points to the printing task
-void start_next(Printer *p, Task *t) {
-    
+void start_next(Printer *p, Task *t) { // Starts the task that is the front of the q. 
+    p->current_task = t;
 }
-
-//display the printer's current status
-//  *p, the pointer points to the printer
-void printer_status(Printer *p) {
-    
+void printer_status(Printer *p) { // Prints the printers status to the screen.
+    (p->time_remaining != 0) ? puts("\nTHE PRINTER IS BUSY") : puts("\nTHE PRINTER IS NO LONGER BUSY");
 }
