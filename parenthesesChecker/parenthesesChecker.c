@@ -102,11 +102,13 @@ int validExpression(char *expression, int *flag) {
 }
 
 void push(char character) { // Inserts a character to the top of the stack.
+    if (top == MAX-1) return;
     top = top+1; // Increments top to be the new top position.
     stack[top] = character; // Inserts the character to the new top position of the stack.
 }
 
 char pop() { // Deletes a character from the top of the stack.
+    if (top == -1) return 'e';
     return stack[top--]; // Decrement the value of top and returns the character at the new top position.
 }
 
